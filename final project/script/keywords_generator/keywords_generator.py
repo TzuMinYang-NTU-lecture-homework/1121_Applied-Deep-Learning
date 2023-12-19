@@ -65,6 +65,25 @@ book_genre = [
     "True Crime",
 ]
 
+book_selling_keywords = [
+    "best",
+    "seller",
+    "selling",
+    "award",
+    "prize",
+    "author",
+    "edition",
+    "review",
+    "read",
+    "publish",
+    "abstract",
+    "summary",
+    "amazon",
+    "book",
+    "times",
+    "new york",
+    "good",
+]
 
 def parse_args():
     parser = argparse.ArgumentParser(description="Extract keyphrases from book abstracts.")
@@ -93,7 +112,7 @@ def parse_args():
 
 def generate_keywords(model, tokenizer, book_titles):
     keyphrases_dicts = []
-    fail_book = []
+    #fail_book = []
     #ouput_list = []
     # Extract the book abstracts
     idx = 0
@@ -114,7 +133,7 @@ def generate_keywords(model, tokenizer, book_titles):
             search_title = "Amazon+book+" + book_title.replace(" ", "+")
             driver.get(f"https://www.google.com.tw/search?q={search_title}")
 
-            # Click the first Amazon link on Google search result
+            # Click the first Amazon link on Google search keywords
             links = driver.find_elements("xpath", "//a[@href]")
             for link in links:
                 # check if the link is an Amazon link and the first word in the book title is in the link
@@ -135,12 +154,12 @@ def generate_keywords(model, tokenizer, book_titles):
                 "//div[@id='bookDescription_feature_div']//div[@data-a-expander-name='book_description_expander']//div",
             )
         except:
-            print(f"{book_title}: Abstract not found.")
+            print(f"{book_title}: Abstract not found. Try again...")
             print("-------------------------------------------------------------")
-            fail_book.append(book_title)
+            #fail_book.append(book_title)
             # Close the Chrome browser and try again
             driver.quit()
-            idx += 1
+            #idx += 1
             continue
 
         # Process the book abstract
@@ -156,6 +175,7 @@ def generate_keywords(model, tokenizer, book_titles):
         book_abstract = re.sub("[^a-zA-Z0-9.,\- ]", "", book_abstract)
         #print(book_abstract)
         print(f"{book_title}: Success to find abstract.")
+        print("-------------------------------------------------------------")
 
         # Close the Chrome browser
         driver.quit()
@@ -216,22 +236,22 @@ def generate_keywords(model, tokenizer, book_titles):
                 skip_special_tokens=True,
                 clean_up_tokenization_spaces=True,
             )
-            keyphrases = [kp.strip() for kp in extracted_kps]
+            keyphrases = [re.sub("[,.]", "", kp.strip()) for kp in extracted_kps]
 
-            # Delete keyphrases are the same with the book title
+            # Delete keyphrases are related to the book selling
             for i in range(len(keyphrases)):
-                if keyphrases[i] == book_title.lower():
-                    keyphrases[i] = ""
-                    keyphrases_score[i] = 0
+                for tag in book_selling_keywords:
+                    if tag in keyphrases[i]:
+                        keyphrases[i] = ""
+                        keyphrases_score[i] = 0
+                        break
             # Delete repeated keyphrases
             for i in range(len(keyphrases)):
                 for j in range(i + 1, len(keyphrases)):
-                    if (
-                        keyphrases[i].split(" ")[0] == keyphrases[j].split(" ")[0]
-                        or keyphrases[i].split(" ")[-1] == keyphrases[j].split(" ")[-1]
-                    ):
-                        keyphrases[j] = ""
-                        keyphrases_score[j] = 0
+                    if keyphrases[i] in keyphrases[j] or keyphrases[j] in keyphrases[i]:
+                        if keyphrases[i] != "" and keyphrases[j] != "":
+                            keyphrases[j] = ""
+                            keyphrases_score[j] = 0
             # Delete person names
             for i in range(len(keyphrases)):
                 for word in keyphrases[i].split(" "):
@@ -273,16 +293,16 @@ def generate_keywords(model, tokenizer, book_titles):
     #json.dump(ouput_list, output_file)
 
     """keywords Score Calculation"""
-    # convert book keywords to lowercase string
+    # convert book genre keywords to lowercase string
     book_genre_str = str(book_genre).lower()
-    # check if keyphrase is in book keywords
+    # check if keyphrase is in book genre keywords
     genre_related_keywords = {}
     other_keywords = {}
     for i in range(len(keyphrases_dicts)):
         for keyphrase, score in keyphrases_dicts[i].items():
-            for word in keyphrase.split(" "):
-                if word in book_genre_str:
-                    genre_related_keywords[keyphrase] = score
+            for genre in book_genre:
+                if genre.lower() in keyphrase:
+                    genre_related_keywords[genre.lower()] = score
                     break
             other_keywords[keyphrase] = score
 
@@ -304,12 +324,18 @@ def generate_keywords(model, tokenizer, book_titles):
     # merge the two lists
     merged_keywords = genre_related_keywords + other_keywords
     # delete repeated keyphrases
-    result = {}
+    keywords = {}
     for i in range(len(merged_keywords)):
+        already_in_keywords = False
         tag, score = list(merged_keywords[i].items())[0]
-        if tag.title() not in result:
-            result[tag.title()] = score
+        for keywords_tag in keywords:
+            if tag.title() in keywords_tag.title() or keywords_tag.title() in tag.title():
+                already_in_keywords = True
+                break
+        if not already_in_keywords:
+            keywords[tag.title()] = score
             
-    print(f"{book_title} : dict result is {result}")
+    print(f"{book_title} : dict keywords is {keywords}")
     print("-------------------------------------------------------------")
-    return result
+    return keywords#, fail_book
+
