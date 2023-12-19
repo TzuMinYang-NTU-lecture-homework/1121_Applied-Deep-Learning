@@ -52,4 +52,7 @@ gradio ./script/frontend.py
 ```
 
 #### Problem
-* 關掉 server 後它記憶體不會馬上釋放，要自己去kill
+* 關掉 server 後它顯示卡記憶體不會馬上釋放，要自己去kill
+* 爬蟲爬太多書 (上次一次爬70本) 之後 IP 會被 google擋，只能換 IP 或隔一陣子之後再恢復
+  * 不只 google 會擋，amazon 也有擋過，但 amazon 不會一直連續擋，只會擋其中一兩個其他的沒事
+* 測試過一次同時有兩個人要 run analysis，那次會卡住，後來想說這個 demo 應該先不用考慮給一堆人用的情況就暫時沒處理
