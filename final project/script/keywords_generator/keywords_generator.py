@@ -116,6 +116,7 @@ def generate_keywords(model, tokenizer, book_titles):
     #ouput_list = []
     # Extract the book abstracts
     idx = 0
+    fail_times = 0
     while idx < len(book_titles):
         book_title = book_titles[idx]
 
@@ -156,10 +157,13 @@ def generate_keywords(model, tokenizer, book_titles):
         except:
             print(f"{book_title}: Abstract not found. Try again...")
             print("-------------------------------------------------------------")
+            fail_times += 1
+            if fail_times >= 5:
+                idx += 1 # jump to next book
+                fail_times = 0 # reset fail_times
             #fail_book.append(book_title)
             # Close the Chrome browser and try again
             driver.quit()
-            #idx += 1
             continue
 
         # Process the book abstract

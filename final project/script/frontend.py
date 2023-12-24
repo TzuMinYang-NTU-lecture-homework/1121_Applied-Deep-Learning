@@ -38,7 +38,7 @@ comments_tokenizer = AutoTokenizer.from_pretrained(comments_model_path)
 if comments_tokenizer.pad_token_id is None:
     comments_tokenizer.pad_token_id = comments_tokenizer.eos_token_id
 
-comments_peth_model_path = "./script/comments_generator/checkpoint-2000"
+comments_peth_model_path = "./script/comments_generator/lora"
 comments_model = PeftModel.from_pretrained(comments_model, comments_peth_model_path)
 
 # prepare wordcloud mask
@@ -53,14 +53,7 @@ def inference(book_titles):
     
     # keywords
     print("================================================ Generating keywords =============================================================")
-    keywords_dict = {}
-    for book_title in book_titles.split("\n"):
-        new_keywords_dict = generate_keywords(keywords_model, keywords_tokenizer, [book_title])
-        for key, value in new_keywords_dict.items():
-            if key in keywords_dict:
-                keywords_dict[key] += value
-            else:
-                keywords_dict[key] = value
+    keywords_dict = generate_keywords(keywords_model, keywords_tokenizer, book_titles.split("\n"))
     print(f"final keyword dict is {keywords_dict}")
     keywords = ", ".join([keyword for keyword, _ in keywords_dict.items()][: use_keywords_num])
     
@@ -68,7 +61,7 @@ def inference(book_titles):
     print("================================================ Generating comments =============================================================")
     # 因為只有幾行而已，所以我直接寫過來沒有call另一個檔案的function了
     tokenized_keywords = comments_tokenizer(get_prompt(keywords), return_tensors="pt").to("cuda:0")
-    comments = comments_model.generate(**tokenized_keywords, max_new_tokens=1024) # 在這邊設 max_new_tokens 它會warning
+    comments = comments_model.generate(**tokenized_keywords, max_new_tokens=512) # 本來是512，會有4-6句
     comments = comments_tokenizer.decode(comments[0], skip_special_tokens=True).split("ANSWER: ")[-1]
     comments = ". \n".join(comments.split(". ")) # 每句講完換行不然太長
     print(f"comments are below: \n{comments}")
@@ -86,32 +79,39 @@ def inference(book_titles):
     return [keywords, comments, wordcloud]
 
 storj_theme = gr.Theme.from_hub("bethecloud/storj_theme")
-bibliography = gr.Textbox(label="Your bibliography", info="Please enter your bibliography, each book title for one line. Max input is 50 books", max_lines=10000, interactive=True, lines=25)
-
+catalog = gr.Textbox(label="Your book catalog", info="Please enter your catalog, each book title for one line. Max input is 50 books", max_lines=10000, interactive=True, lines=25)
+#, css='div {background-image: url("https://drive.google.com/uc?export=view&id=1fnRY37bYeCppcy8pTaVztwOLiLQT60U1")}'
+#https://i.imgur.com/k1OCRLB.png
+# https://drive.google.com/file/d/1JFMtXaCxdJSWwAuq_9vA2vOhrAI5W2g8/view?usp=sharing
+# https://drive.google.com/file/d/1wbZMApdxe1SQZgSLW13VyVTiLcF2VZto/view?usp=sharing
+# https://drive.google.com/file/d/1wbZMApdxe1SQZgSLW13VyVTiLcF2VZto/view?usp=sharing
 with gr.Blocks(theme=storj_theme) as demo:
     with gr.Row():
         # title and description
-        gr.HTML("""
-            <h1 style="text-align: center;">  Books Wrapped </h1>
+        # <img  src='https://i.imgur.com/fj8DuNT.png' referrerpolicy="no-referrer"> 
+        # <img  src='https://i.imgur.com/rQ7uA15.png' referrerpolicy="no-referrer"> 
+        # <img  src='https://i.imgur.com/rQ7uA15.png' referrerpolicy="no-referrer">  
+        gr.HTML(f"""
+            <h1 style="text-align: center;"> Books Wrapped </h1>
             <p style="text-align: center;"> This is a book version Spotify Wrapped application. </p>
             """)
     with gr.Row():
-        gr.Examples(["example1", "example2", "example3"], inputs=bibliography, outputs=bibliography, fn=process_examples, run_on_click=True) # !!! 用cache example會error，待解決
+        gr.Examples(["example1", "example2", "example3"], inputs=catalog, outputs=catalog, fn=process_examples, run_on_click=True) # !!! 用cache example會error，待解決
     with gr.Row():
         # columns width will be 2: 3
         with gr.Column(scale=2):
-            bibliography.render()
+            catalog.render()
             with gr.Row():
                 clear =  gr.Button("Clear")
                 run = gr.Button("Run analysis", variant="primary")
         with gr.Column(scale=3):
-            comments = gr.Textbox(label="Your comments", info="It reflects what kind of people you are.", interactive=False)
+            comments = gr.Textbox(label="Personality Trait", info="It reflects what kind of people you are.", interactive=False)
             appellation = gr.Textbox(label="Your keywords", info="It gives you some keywords about you.", interactive=False)
             wordcloud = gr.Image(label="Your wordcloud of keywords")
     
-    run_event = run.click(fn=inference, inputs=bibliography, outputs=[appellation, comments, wordcloud])
-    clear.click(lambda: None, outputs=bibliography)
+    run_event = run.click(fn=inference, inputs=catalog, outputs=[appellation, comments, wordcloud])
+    clear.click(lambda: None, outputs=catalog)
 
 
 if __name__ == "__main__":
-    demo.launch(show_api=False) # , share=True
+    demo.launch(show_api=False, share=True) # , share=True

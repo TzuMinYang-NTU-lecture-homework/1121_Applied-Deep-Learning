@@ -1,4 +1,5 @@
-comments_generator/
+Llama-2-7b-chat-hf/
 checkpoint-2000/
+lora/
 distilbert_keyphrase_extraction_v2/
 ori/

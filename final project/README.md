@@ -8,7 +8,7 @@
 * 模仿 Spotify 的年度回顧，做一個英文書版本的年度回顧
 * 根據書的摘要分析書的 keywords 後畫成 wordcloud，並根據 keywords 產生一個屬於你的個人評價
 
-![Alt text](./images/image.png)
+![Alt text](./data/demo_result.png)
 
 ### 運作邏輯
 1. input 書目
@@ -24,7 +24,7 @@
 #### Download 
 * clone or download this repository
 * download line 群組的 `keywords_generator.zip` 把裡面的 `distilbert_keyphrase_extraction_v2` 放到 `./script/keywords_generator/distilbert_keyphrase_extraction_v2`
-* download [comments_generator](https://drive.google.com/drive/folders/1pqQUWoSl-ZVYUvdvOVbTjngeDjYfwqJb?usp=drive_link) 把裡面的 `checkpoint-2000` 放到 `./script/comments_generator/checkpoint-2000` (之後連結應該會過期)
+* download [comments_generator](https://drive.google.com/drive/folders/1pqQUWoSl-ZVYUvdvOVbTjngeDjYfwqJb?usp=drive_link) 把裡面的 `new-checkpoint-1000` 放到 `./script/comments_generator/lora` (之後連結應該會過期)
 * clone or download [base model](https://huggingface.co/NousResearch/Llama-2-7b-chat-hf) 放到 `./script/comments_generator/Llama-2-7b-chat-hf`
   * 把裡面的 `generation_config.json` 移除或改名
 
