@@ -1,0 +1,1 @@
+python generate_keywords.py --model_name_or_path ./distilbert_keyphrase_extraction --book_titles_path ./book_titles.json --output_path ./output.json

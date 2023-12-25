@@ -1,5 +1,7 @@
 Llama-2-7b-chat-hf/
 checkpoint-2000/
+checkpoint-1000/
 lora/
 distilbert_keyphrase_extraction_v2/
+distilbert_keyphrase_extraction/
 ori/
