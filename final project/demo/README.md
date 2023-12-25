@@ -1,6 +1,8 @@
-### Reproduce
+### Goal
+Integrate two modules and frontend as a web UI.
 
-#### Download 
+#### Establish enviroment
+* must run in linux
 * clone or download this repository
 * If you never done this, `cd ../keywords_generator`
   * Download [distilbert-base-uncased](https://huggingface.co/distilbert-base-uncased) as base model and store as `distilbert-base-uncased`
@@ -9,9 +11,6 @@
   * Download [NousResearch/Llama-2-7b-chat-hf](https://huggingface.co/NousResearch/Llama-2-7b-chat-hf) as base model and store as `Llama-2-7b-chat-hf`
       * remove or rename `generation_config.json`
   * `cd ../demo`
-
-#### Establish enviroment
-* must run in linux
 * install conda
 * install google-chrome browser
 * install packges in `requirements.txt`
@@ -26,7 +25,7 @@
     ```
 
 
-#### Run demo
+#### How to run
 ```bash
 gradio ./script/frontend.py
 ```
