@@ -21,6 +21,7 @@
 
 
 #### Function of every directory
+The details of running are in the README.md of dircrory respectively.
 * `keywords_generator`: the keywords generator's data preparation, training and inference
 * `comments_generator`: the comments generator's training and inference
 * `demo`: integrate the fine-tune modules and front end, run a web UI

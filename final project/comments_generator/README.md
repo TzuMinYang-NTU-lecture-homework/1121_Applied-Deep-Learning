@@ -41,6 +41,17 @@ python train.py \
 --train_files ./data/train.json
 ```
 
+### How to calculate perplexity score
+* base model directory: `Llama-2-7b-chat-hf`
+* peft model directory: `checkpoint-1000`
+* input testing file: `./data/test.json`
+```bash
+python ppl.py \
+--base_model_path Llama-2-7b-chat-hf \
+--peft_path checkpoint-1000 \
+--test_data_path ./data/test.json
+```
+
 ### How to predict
 * base model directory: `Llama-2-7b-chat-hf`
 * peft model directory: `checkpoint-1000`
