@@ -1,12 +1,12 @@
 ### Goal
-By giving book catalog to generate some keywords about the types of books a person likes to read
+By giving a book catalog to generate some keywords about the types of books a person likes to read
 - input: book catalog
-- output: several keywords about catalog 
+- output: several keywords about the catalog 
 
-### Establish enviroment
-* must run in Windows
+### Establish environment
+* must run on Windows
 * install `conda`
-* install packges in `environment.yml`
+* install packages in `environment.yml`
     ```bash
     conda env create --name ADL_final_keywords -f environment.yml
     conda activate ADL_final_keywords
