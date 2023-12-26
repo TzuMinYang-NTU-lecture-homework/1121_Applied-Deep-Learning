@@ -4,10 +4,10 @@ By giving some keywords about the types of books a person likes to read to gener
 - input: some keywords about books
 - output: sentences describing the reader's personality
 
-### Establish enviroment
-* must run in linux
+### Establish environment
+* must run on Linux
 * install `conda`
-* install packges in `requirements.txt`
+* install packages in `requirements.txt`
     ```bash
     conda env create --name ADL_final_comments python=3.10
     conda activate ADL_final_comments
@@ -17,8 +17,8 @@ By giving some keywords about the types of books a person likes to read to gener
 * Download [NousResearch/Llama-2-7b-chat-hf](https://huggingface.co/NousResearch/Llama-2-7b-chat-hf) as base model and store as `Llama-2-7b-chat-hf`
     * remove or rename `generation_config.json`
 
-### Train, validation, test data preparation
-* You need to fill in your `OPENAI API KEY` in 6th line in `data_generate.py` to run it. 
+### Train, validate, test data preparation
+* You need to fill in your `OPENAI API KEY` in the 6th line in `data_generate.py` to run it. 
 
 * output file: (total 10000 data)
     * training file: `./data/train.json` (8000 data)
@@ -33,7 +33,7 @@ cd ..
 ### How to train
 
 * base model directory: `Llama-2-7b-chat-hf`
-* input traning file: `./data/train.json`
+* input training file: `./data/train.json`
 * output peft model directory: `checkpoint-1000`
 ```bash
 python train.py \
@@ -41,7 +41,7 @@ python train.py \
 --train_files ./data/train.json
 ```
 
-### How to calculate perplexity score
+### How to calculate the perplexity score
 * base model directory: `Llama-2-7b-chat-hf`
 * peft model directory: `checkpoint-1000`
 * input testing file: `./data/test.json`
