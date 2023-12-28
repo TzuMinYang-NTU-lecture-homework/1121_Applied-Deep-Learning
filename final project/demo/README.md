@@ -4,12 +4,13 @@ Integrate two modules and frontend as a web UI.
 #### Establish environment
 * must run on Linux
 * clone or download this repository
-* If you have never done this, `cd ../keywords_generator`
-  * Download [distilbert-base-uncased](https://huggingface.co/distilbert-base-uncased) as base model and store as `distilbert-base-uncased`
+* If you have never done this
+  * `cd ../keywords_generator`
+  * do the things in the README.md
   * `cd ../demo`
-* If you have never done this, `cd ../comments_generator`
-  * Download [NousResearch/Llama-2-7b-chat-hf](https://huggingface.co/NousResearch/Llama-2-7b-chat-hf) as base model and store as `Llama-2-7b-chat-hf`
-      * remove or rename `generation_config.json`
+* If you have never done this
+  * `cd ../comments_generator`
+  * do the things in the README.md
   * `cd ../demo`
 * install conda
 * install google-chrome browser
